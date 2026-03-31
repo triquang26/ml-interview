@@ -1,0 +1,10 @@
+datasets/dataset_prior/*
+!datasets/dataset_prior/.gitkeep
+outputs/saved_models/*
+
+!outputs/saved_models/*/
+
+outputs/saved_models/*/*
+!outputs/saved_models/*/.gitkeep
+
+outputs/saved_models/baseline/unitree/
