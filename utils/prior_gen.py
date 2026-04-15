@@ -8,10 +8,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TXT_PATH = BASE_DIR / "datasets" / "dataset" / "prompts_and_classes.txt"
 BASE_SAVE_DIR = BASE_DIR / "datasets" / "dataset_prior"
 
-NUM_TRAIN = 1000
-TARGET_CLASSES = ["dog", "toy"]
+NUM_TRAIN = 800
+TARGET_CLASSES = ["first-person view of double robotic arms"]
 MODEL_ID = "runwayml/stable-diffusion-v1-5"
-BATCH_SIZE = 8
+BATCH_SIZE = 32
 NUM_INFERENCE_STEPS = 25
 
 def load_class_to_subjects(txt_path):
@@ -52,7 +52,8 @@ def load_class_to_subjects(txt_path):
 def setup_pipeline():
     pipe = StableDiffusionPipeline.from_pretrained(
         MODEL_ID, 
-        torch_dtype=torch.float16
+        torch_dtype=torch.float16,
+        safety_checker=None
     ).to("cuda")
     
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)

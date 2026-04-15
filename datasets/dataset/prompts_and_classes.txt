@@ -63,6 +63,7 @@ teapot,teapot
 vase,vase
 wolf_plushie,stuffed animal
 unitree,humanoid robot
+agibot,first-person view of double robotic arms
 Prompts
 
 Object Prompts

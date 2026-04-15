@@ -75,3 +75,96 @@ Run the evaluation script to compare the target instances located in [`datasets/
 ```bash
 python utils/score_report.py
 ```
+
+---
+
+## Quick Start: AgiBot World Pipeline
+
+### 1. Install Additional Dependencies
+```bash
+pip install pinocchio imageio opencv-python
+```
+
+### 2. Download Dataset
+Go to [AgiBotWorld2026 on HuggingFace](https://huggingface.co/datasets/agibot-world/AgiBotWorld2026) and download the dataset. 
+Place the data into the `pose-generator/AgiBotWorld2026/` directory matching this exact structure:
+- `data/data`
+- `data/meta`
+- `data/videos`
+
+### 3. Data Preprocessing
+Navigate to the AgiBotWorld folder:
+```bash
+cd pose-generator/AgiBotWorld2026/
+```
+
+- **Extract skeleton poses & original frames:**
+```bash
+python data_preprocess.py
+```
+**[!] Path configuration note for `data_preprocess.py`:**
+- `START_EPISODE` and `END_EPISODE` variables (lines 9, 10): Modify these to limit the dataset generation.
+- `BASE_DIR` variable (line 11): Currently hardcoded to the absolute path `/mnt/data/sftp/data/quangpt3/difgit/ml-interview/pose-generator/AgiBotWorld2026`. If you encounter a path error, update this to your correct dataset directory.
+
+- **Generate segmentation masks:**
+```bash
+python mask_preprocess.py --start <episode_start> --end <episode_end>
+```
+*(Example: `python mask_preprocess.py --start 0 --end 10`)*
+
+- **Test 3D skeleton to 2D projection:**
+```bash
+python skeleton.py
+```
+**[!] Path configuration note for `skeleton.py`:**
+- `EPISODE = 31` and `FRAME_IDX = 150` variables (lines 8, 9): Modify these to test a specific frame and episode.
+- `BASE_DIR`: Similar to `data_preprocess.py`, ensure this points directly to the `AgiBotWorld2026` folder. The script will output a file named `EXTENDED_DIRECTION.jpg` into the current directory.
+
+### 4. Training (Experiments)
+Return to the main project directory:
+```bash
+cd ../../
+```
+
+**[!] Important note on paths for Training scripts:**
+All 3 experiment files below contain hardcoded path variables at the beginning of the file. You must review and modify them before training:
+- **`src/experiment4.py`**: The `INSTANCE_BASE_DIR` and `PRIOR_BASE_DIR` variables are resolved via a `REPO_ROOT` path. Note that the output directory at `MODEL_SAVE_DIR` is set to `experiment4`.
+- **`src/experiment5.py`**: The dataset points to the `dataset-dreambooth-agibot/instance` directory. Output is saved to `experiment5-agibot`.
+- **`src/experiment6.py`**: The `DATA_BASE_DIR` path is hardcoded as an absolute string `/mnt/data/sftp/...AgiBotWorld2026/extracted_data` (line 15). Be sure to update this if your folder location changes. The output is hardcoded to the root directory at `outputs/agibot_t2i_adapter`.
+
+- **Experiment 4** (Train resolve followup question 1):
+```bash
+python src/experiment4.py
+```
+
+- **Experiment 5** (Train Dreambooth + T2I-Adapter base):
+```bash
+python src/experiment5.py
+```
+
+- **Experiment 6** (Train T2I-Adapter with new dataset & SDXL freeze):
+```bash
+python src/experiment6.py
+```
+
+### 5. Inference
+**[!] Inference Scripts:** 
+Before running inference, you **MUST** configure 3 important parameters inside the inference scripts:
+1. `POSE_PATHS`: An array containing file paths to the pose images you want to use as inputs (modify it with the images you want to render).
+2. `MODEL_SAVE_DIR` / `ADAPTER_PATH`: The directory to load the pretrained model and T2I-Adapter checkpoints from (e.g., `experiment4/unitree`, `agibot_t2i_adapter/adapter_step_2500`...).
+3. `OUTPUT_DIR`: The directory to save the generated output images.
+
+- **Inference with AgiBot Model:**
+```bash
+python src/inference-agibot.py
+```
+
+- **Inference with T2I-Adapter for SDXL:**
+```bash
+python src/inference-t2i-adapter-sdxl.py
+```
+
+- **General Inference (ControlNet/T2I-Adapter base):**
+```bash
+python src/inference.py
+```

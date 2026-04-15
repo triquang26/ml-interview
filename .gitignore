@@ -1,10 +1,26 @@
 datasets/dataset_prior/*
 !datasets/dataset_prior/.gitkeep
+
+# Outputs directory
+outputs/*
+!outputs/saved_models/
 outputs/saved_models/*
-
 !outputs/saved_models/*/
-
 outputs/saved_models/*/*
 !outputs/saved_models/*/.gitkeep
-
 outputs/saved_models/baseline/unitree/
+
+# Project-specific generated data
+Agi*
+pose-generator/AgiBotWorld2026/data/
+pose-generator/AgiBotWorld2026/extracted_data/
+EXTENDED_DIRECTION.jpg
+
+# Python and standard ignores
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env/
+.DS_Store
+notebooks/.ipynb_checkpoints/
