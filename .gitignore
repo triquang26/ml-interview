@@ -12,8 +12,10 @@ outputs/saved_models/baseline/unitree/
 
 # Project-specific generated data
 Agi*
+!pose-generator/AgiBotWorld2026/
 pose-generator/AgiBotWorld2026/data/
 pose-generator/AgiBotWorld2026/extracted_data/
+pose-generator/AgiBotWorld2026/genie_sim/
 EXTENDED_DIRECTION.jpg
 
 # Python and standard ignores
